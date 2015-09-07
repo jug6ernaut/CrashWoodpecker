@@ -8,14 +8,14 @@ An uncaught exception handler library like Square's [LeakCanary](https://github.
 
 ## Getting started
 
-**NOTE: There is a big bug before VERSION 0.9.5, QAQ thank goodness, it has been fixed in version 0.9.5, please update to 0.9.5, or wait for the update ...**
+**NOTE: There is a big bug before VERSION 0.9.5, QAQ thank goodness, it has been fixed in version 0.9.5, please update to 0.9.5**
 
 In your `build.gradle`:
 
 ```gradle
 dependencies {
-  debugCompile 'me.drakeet.library:crashwoodpecker:0.9.1'// v0.9.1 may cause an exception if you are no Android 5.1.1, please wait for v0.9.5
-  releaseCompile 'me.drakeet.library:crashwoodpecker-do-nothing:0.9.1'
+  debugCompile 'me.drakeet.library:crashwoodpecker:0.9.5'
+  releaseCompile 'me.drakeet.library:crashwoodpecker-do-nothing:0.9.5'
 }
 ```
 
