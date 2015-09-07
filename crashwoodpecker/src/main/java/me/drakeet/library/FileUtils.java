@@ -4,7 +4,7 @@ import java.io.File;
 
 /**
  * File utils.
- * <p/>
+ *
  * Created by markzhai on 2015/9/6.
  */
 public class FileUtils {
