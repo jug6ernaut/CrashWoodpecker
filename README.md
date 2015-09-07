@@ -6,6 +6,8 @@ An uncaught exception handler library like Square's [LeakCanary](https://github.
 
 ## Getting started
 
+**NOTE: There is a big bug before VERSION 0.9.5, QAQ thank goodness, it has been fixed in version 0.9.5, please update to 0.9.5, or wait for the update ...**
+
 In your `build.gradle`:
 
 ```gradle
