@@ -40,8 +40,14 @@ public class MainActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById(R.id.button_crash)
+        findViewById(R.id.button_crash_1)
                 .setOnClickListener {view -> throw IOException("hehe =.=")}
+
+        findViewById(R.id.button_crash_2)
+                .setOnClickListener {view ->
+                    var run = Runnable { -> throw Exception("from a thread ~.~")}
+                    Thread(run).start()
+                }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
