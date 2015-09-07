@@ -1,3 +1,5 @@
+[![GitHub release](https://img.shields.io/badge/sample%20apk-0.9.5-brightgreen.svg?style=flat)](https://github.com/drakeet/CrashWoodpecker/releases/download/0.9.5/LittleWood.apk) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.drakeet.library/crashwoodpecker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.drakeet.library/crashwoodpecker)
+
 #CrashWoodpecker
 
 An uncaught exception handler library like Square's [LeakCanary](https://github.com/square/leakcanary).
@@ -40,8 +42,6 @@ And in your `AndroidManifest.xml` file:
 ```
 
 **That is all!** CrashWoodpecker will automatically show an Activity when your app crash with uncaught exceptions in your debug build.
-
-Demo apk download: https://github.com/drakeet/CrashWoodpecker/releases/download/0.9.5/LittleWood.apk
 
 ## TODO
 
