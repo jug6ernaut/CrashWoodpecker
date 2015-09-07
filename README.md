@@ -27,6 +27,16 @@ public class ExampleApplication extends Application {
 }
 ```
 
+And in your `AndroidManifest.xml` file:
+
+```xml
+<application
+    android:name=".ExampleApplication" // <-- 
+    ...>
+    ...
+</application>
+```
+
 **That is all!** CrashWoodpecker will automatically show an Activity when your app crash with uncaught exceptions in your debug build.
 
 Demo apk download: https://github.com/drakeet/CrashWoodpecker/releases/download/0.9.1/LittleWood.apk
