@@ -1,4 +1,4 @@
-[![GitHub release](https://img.shields.io/badge/sample%20apk-0.9.5-brightgreen.svg?style=flat)](https://github.com/drakeet/CrashWoodpecker/releases/download/0.9.5/LittleWood.apk) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.drakeet.library/crashwoodpecker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.drakeet.library/crashwoodpecker)
+[![GitHub release](https://img.shields.io/badge/sample%20apk-0.9.6-brightgreen.svg?style=flat)](https://github.com/drakeet/CrashWoodpecker/releases/download/0.9.6/LittleWood.apk) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.drakeet.library/crashwoodpecker/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.drakeet.library/crashwoodpecker)
 
 #CrashWoodpecker
 
