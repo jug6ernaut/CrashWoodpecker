@@ -12,7 +12,7 @@ In your `build.gradle`:
 
 ```gradle
 dependencies {
-  debugCompile 'me.drakeet.library:crashwoodpecker:0.9.1'
+  debugCompile 'me.drakeet.library:crashwoodpecker:0.9.1'// v0.9.1 may cause an exception if you are no Android 5.1.1, please wait for v0.9.5
   releaseCompile 'me.drakeet.library:crashwoodpecker-do-nothing:0.9.1'
 }
 ```
