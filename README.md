@@ -57,7 +57,7 @@ If you like my open source projects, you can follow me: https://github.com/drake
 
 Great Square: http://square.github.io
 
-markzhai(contributors): https://github.com/markzhai
+markzhai (contributor): https://github.com/markzhai
 
 License
 ============
