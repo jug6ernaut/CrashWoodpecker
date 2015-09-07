@@ -41,7 +41,7 @@ And in your `AndroidManifest.xml` file:
 
 **That is all!** CrashWoodpecker will automatically show an Activity when your app crash with uncaught exceptions in your debug build.
 
-Demo apk download: https://github.com/drakeet/CrashWoodpecker/releases/download/0.9.2/LittleWood.apk
+Demo apk download: https://github.com/drakeet/CrashWoodpecker/releases/download/0.9.5/LittleWood.apk
 
 ## TODO
 
