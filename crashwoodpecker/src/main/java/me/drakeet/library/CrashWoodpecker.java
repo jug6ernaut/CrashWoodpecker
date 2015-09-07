@@ -57,12 +57,13 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
 
     private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
-    private volatile Thread.UncaughtExceptionHandler mOriginHandler;
+    private volatile UncaughtExceptionHandler mOriginHandler;
     private volatile UncaughtExceptionInterceptor mInterceptor;
     private volatile boolean mCrashing = false;
 
     private Context mContext;
     private String mVersion;
+
 
     /**
      * Install CrashWoodpecker.
@@ -107,6 +108,7 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         if (this != originHandler) {
             mOriginHandler = originHandler;
             Thread.currentThread().setUncaughtExceptionHandler(this);
+            Thread.setDefaultUncaughtExceptionHandler(this);
         }
     }
 
@@ -152,46 +154,6 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         if ((mForceHandleByOrigin || !isHandle) && mOriginHandler != null) {
             mOriginHandler.uncaughtException(thread, throwable);
         }
-    }
-
-
-    private boolean saveToFile(Throwable throwable) {
-        String time = mFormatter.format(new Date());
-        String fileName = "Crash-" + time + ".log";
-        String crashDir = getCrashDir();
-        String crashPath = crashDir + fileName;
-
-        String androidVersion = Build.VERSION.RELEASE;
-        String deviceModel = Build.MODEL;
-        String manufacturer = Build.MANUFACTURER;
-
-        File file = new File(crashPath);
-        if (file.exists()) {
-            file.delete();
-        }
-        else {
-            try {
-                new File(crashDir).mkdirs();
-                file.createNewFile();
-            } catch (IOException e) {
-                return false;
-            }
-        }
-
-        PrintWriter writer;
-        try {
-            writer = new PrintWriter(file);
-        } catch (FileNotFoundException e) {
-            return false;
-        }
-        writer.write("Device: " + manufacturer + ", " + deviceModel + "\n");
-        writer.write("Android Version: " + androidVersion + "\n");
-        if (mVersion != null) writer.write("App Version: " + mVersion + "\n");
-        writer.write("---------------------\n\n");
-        throwable.printStackTrace(writer);
-        writer.close();
-
-        return true;
     }
 
 
@@ -270,6 +232,46 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         throwable.printStackTrace(printWriter);
         printWriter.close();
         return writer.toString();
+    }
+
+
+    private boolean saveToFile(Throwable throwable) {
+        String time = mFormatter.format(new Date());
+        String fileName = "Crash-" + time + ".log";
+        String crashDir = getCrashDir();
+        String crashPath = crashDir + fileName;
+
+        String androidVersion = Build.VERSION.RELEASE;
+        String deviceModel = Build.MODEL;
+        String manufacturer = Build.MANUFACTURER;
+
+        File file = new File(crashPath);
+        if (file.exists()) {
+            file.delete();
+        }
+        else {
+            try {
+                new File(crashDir).mkdirs();
+                file.createNewFile();
+            } catch (IOException e) {
+                return false;
+            }
+        }
+
+        PrintWriter writer;
+        try {
+            writer = new PrintWriter(file);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        writer.write("Device: " + manufacturer + ", " + deviceModel + "\n");
+        writer.write("Android Version: " + androidVersion + "\n");
+        if (mVersion != null) writer.write("App Version: " + mVersion + "\n");
+        writer.write("---------------------\n\n");
+        throwable.printStackTrace(writer);
+        writer.close();
+
+        return true;
     }
 
 
