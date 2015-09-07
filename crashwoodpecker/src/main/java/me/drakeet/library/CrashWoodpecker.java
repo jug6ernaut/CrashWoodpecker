@@ -30,28 +30,58 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import me.drakeet.library.ui.CatchActivity;
 
 /**
  * Created by drakeet(http://drakeet.me)
  * Date: 8/31/15 22:35
  */
-public class CrashWoodpecker implements Thread.UncaughtExceptionHandler {
+public class CrashWoodpecker implements UncaughtExceptionHandler {
+    private final static String TAG = "CrashWoodpecker";
+
+    // Default log out time, 7days.
+    private final static long LOG_OUT_TIME = 1000 * 60 * 60 * 24 * 7;
 
     private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-    private Thread.UncaughtExceptionHandler mOriginHandler;
+
+    private volatile Thread.UncaughtExceptionHandler mOriginHandler;
+    private volatile UncaughtExceptionInterceptor mInterceptor;
+    private volatile boolean mCrashing = false;
+
     private Context mContext;
     private String mVersion;
+    private static boolean mForceHandleByOrigin = false;
 
+    /**
+     * Install CrashWoodpecker.
+     *
+     * @return CrashWoodpecker instance.
+     */
     public static CrashWoodpecker fly() {
+        return fly(false);
+    }
+
+    /**
+     * Install CrashWoodpecker with forceHandleByOrigin param.
+     * @param forceHandleByOrigin whether to force original UncaughtExceptionHandler handle again,
+     *                            by default false.
+     * @return CrashWoodpecker instance.
+     */
+    public static CrashWoodpecker fly(boolean forceHandleByOrigin) {
+        mForceHandleByOrigin = forceHandleByOrigin;
         return new CrashWoodpecker();
     }
 
@@ -67,8 +97,13 @@ public class CrashWoodpecker implements Thread.UncaughtExceptionHandler {
     }
 
     private CrashWoodpecker() {
-        mOriginHandler = Thread.currentThread().getUncaughtExceptionHandler();
-        Thread.currentThread().setUncaughtExceptionHandler(this);
+        UncaughtExceptionHandler originHandler = Thread.currentThread().getUncaughtExceptionHandler();
+
+        // check to prevent set again
+        if (this != originHandler) {
+            mOriginHandler = originHandler;
+            Thread.currentThread().setUncaughtExceptionHandler(this);
+        }
     }
 
     private boolean handleException(Throwable throwable) {
@@ -88,8 +123,26 @@ public class CrashWoodpecker implements Thread.UncaughtExceptionHandler {
     }
 
     @Override public void uncaughtException(Thread thread, Throwable throwable) {
+        // Don't re-enter,  avoid infinite loops if crash-handler crashes.
+        if (mCrashing) {
+            return;
+        }
+        mCrashing = true;
+
+        // pass it to interceptor's before method
+        UncaughtExceptionInterceptor interceptor = mInterceptor;
+        if (interceptor != null && interceptor.onInterceptExceptionBefore(thread, throwable)) {
+            return;
+        }
+
         boolean isHandle = handleException(throwable);
-        if (!isHandle && mOriginHandler != null) {
+
+        // pass it to interceptor's after method
+        if (interceptor != null && interceptor.onInterceptExceptionAfter(thread, throwable)) {
+            return;
+        }
+
+        if ((mForceHandleByOrigin || !isHandle) && mOriginHandler != null) {
             mOriginHandler.uncaughtException(thread, throwable);
         }
     }
@@ -97,9 +150,7 @@ public class CrashWoodpecker implements Thread.UncaughtExceptionHandler {
     private boolean saveToFile(Throwable throwable) {
         String time = mFormatter.format(new Date());
         String fileName = "Crash-" + time + ".log";
-
-        String rootPath = Environment.getExternalStorageDirectory().getPath();
-        String crashDir = rootPath + "/CrashWoodpecker/";
+        String crashDir = getCrashDir();
         String crashPath = crashDir + fileName;
 
         String androidVersion = Build.VERSION.RELEASE;
@@ -135,6 +186,57 @@ public class CrashWoodpecker implements Thread.UncaughtExceptionHandler {
         return true;
     }
 
+
+    /**
+     * Set uncaught exception interceptor.
+     *
+     * @param interceptor uncaught exception interceptor.
+     */
+    public void setInterceptor(UncaughtExceptionInterceptor interceptor) {
+        mInterceptor = interceptor;
+    }
+
+    /**
+     * Delete outmoded logs.
+     */
+    public void deleteLogs() {
+        deleteLogs(LOG_OUT_TIME);
+    }
+
+    /**
+     * Delete outmoded logs.
+     *
+     * @param timeout outmoded timeout.
+     */
+    public void deleteLogs(final long timeout) {
+        final File logDir = new File(getCrashDir());
+        if (logDir == null) {
+            return;
+        }
+        try {
+            final long currTime = System.currentTimeMillis();
+            File[] files = logDir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    File f = new File(dir, filename);
+                    return currTime - f.lastModified() > timeout;
+                }
+            });
+            if (files != null) {
+                for (File f : files) {
+                    FileUtils.delete(f);
+                }
+            }
+        } catch (Exception e) {
+            Log.v(TAG, "exception occurs when deleting outmoded logs", e);
+        }
+    }
+
+    private String getCrashDir() {
+        String rootPath = Environment.getExternalStorageDirectory().getPath();
+        return rootPath + "/CrashWoodpecker/";
+    }
+
     private void startCatchActivity(Throwable throwable) {
         String traces = getStackTrace(throwable);
         Intent intent = new Intent();
@@ -156,5 +258,25 @@ public class CrashWoodpecker implements Thread.UncaughtExceptionHandler {
         throwable.printStackTrace(printWriter);
         printWriter.close();
         return writer.toString();
+    }
+
+
+    public interface UncaughtExceptionInterceptor {
+        /**
+         * Called before this uncaught exception be handled by {@link CrashWoodpecker}.
+         *
+         * @return true if intercepted, which means this event won't be handled
+         * by {@link CrashWoodpecker}.
+         */
+        boolean onInterceptExceptionBefore(Thread t, Throwable ex);
+
+        /**
+         * Called after this uncaught exception be handled by
+         * {@link CrashWoodpecker} (but before {@link CrashWoodpecker}'s parent).
+         *
+         * @return true if intercepted, which means this event won't be handled
+         * by {@link CrashWoodpecker}'s parent.
+         */
+        boolean onInterceptExceptionAfter(Thread t, Throwable ex);
     }
 }
