@@ -50,7 +50,9 @@ import me.drakeet.library.ui.CatchActivity;
  * Date: 8/31/15 22:35
  */
 public class CrashWoodpecker implements UncaughtExceptionHandler {
+
     private final static String TAG = "CrashWoodpecker";
+    private static boolean mForceHandleByOrigin = false;
 
     // Default log out time, 7days.
     private final static long LOG_OUT_TIME = 1000 * 60 * 60 * 24 * 7;
@@ -63,7 +65,6 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
 
     private Context mContext;
     private String mVersion;
-    private static boolean mForceHandleByOrigin = false;
 
     /**
      * Install CrashWoodpecker.
@@ -74,16 +75,19 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         return fly(false);
     }
 
+
     /**
      * Install CrashWoodpecker with forceHandleByOrigin param.
+     *
      * @param forceHandleByOrigin whether to force original UncaughtExceptionHandler handle again,
-     *                            by default false.
+     * by default false.
      * @return CrashWoodpecker instance.
      */
     public static CrashWoodpecker fly(boolean forceHandleByOrigin) {
         mForceHandleByOrigin = forceHandleByOrigin;
         return new CrashWoodpecker();
     }
+
 
     public void to(Context context) {
         mContext = context;
@@ -96,8 +100,10 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         }
     }
 
+
     private CrashWoodpecker() {
-        UncaughtExceptionHandler originHandler = Thread.currentThread().getUncaughtExceptionHandler();
+        UncaughtExceptionHandler originHandler =
+                Thread.currentThread().getUncaughtExceptionHandler();
 
         // check to prevent set again
         if (this != originHandler) {
@@ -105,6 +111,7 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
             Thread.currentThread().setUncaughtExceptionHandler(this);
         }
     }
+
 
     private boolean handleException(Throwable throwable) {
         boolean success = saveToFile(throwable);
@@ -117,10 +124,12 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         return success;
     }
 
+
     private void byeByeLittleWood() {
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
     }
+
 
     @Override public void uncaughtException(Thread thread, Throwable throwable) {
         // Don't re-enter,  avoid infinite loops if crash-handler crashes.
@@ -146,6 +155,7 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
             mOriginHandler.uncaughtException(thread, throwable);
         }
     }
+
 
     private boolean saveToFile(Throwable throwable) {
         String time = mFormatter.format(new Date());
@@ -196,12 +206,14 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         mInterceptor = interceptor;
     }
 
+
     /**
      * Delete outmoded logs.
      */
     public void deleteLogs() {
         deleteLogs(LOG_OUT_TIME);
     }
+
 
     /**
      * Delete outmoded logs.
@@ -216,8 +228,7 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         try {
             final long currTime = System.currentTimeMillis();
             File[] files = logDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String filename) {
+                @Override public boolean accept(File dir, String filename) {
                     File f = new File(dir, filename);
                     return currTime - f.lastModified() > timeout;
                 }
@@ -232,10 +243,12 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         }
     }
 
+
     private String getCrashDir() {
         String rootPath = Environment.getExternalStorageDirectory().getPath();
         return rootPath + "/CrashWoodpecker/";
     }
+
 
     private void startCatchActivity(Throwable throwable) {
         String traces = getStackTrace(throwable);
@@ -251,6 +264,7 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         intent.putExtra(CatchActivity.EXTRA_CRASH_LOGS, newStrings);
         mContext.startActivity(intent);
     }
+
 
     private String getStackTrace(Throwable throwable) {
         Writer writer = new StringWriter();

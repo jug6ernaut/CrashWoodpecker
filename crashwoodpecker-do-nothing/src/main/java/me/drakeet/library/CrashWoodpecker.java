@@ -38,6 +38,11 @@ public class CrashWoodpecker {
     }
 
 
+    public static CrashWoodpecker fly(boolean b) {
+        return new CrashWoodpecker();
+    }
+
+
     public void to(Context context) {
     }
 
