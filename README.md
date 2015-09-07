@@ -41,7 +41,7 @@ And in your `AndroidManifest.xml` file:
 </application>
 ```
 
-**That is all!** CrashWoodpecker will automatically show an Activity when your app crash with uncaught exceptions in your debug build.
+**That is all!** CrashWoodpecker will automatically show an Activity when your app crash with uncaught exceptions including new thread exceptions in your debug build.
 
 ## TODO
 
