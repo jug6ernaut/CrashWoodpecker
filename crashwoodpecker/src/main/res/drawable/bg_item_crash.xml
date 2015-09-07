@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ The MIT License (MIT)
   ~
   ~ Copyright (c) 2015 drakeet (drakeet.me@gmail.com)
@@ -27,5 +26,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true"
         android:drawable="@color/item_crash_selected"/>
-    <item android:drawable="?attr/selectableItemBackground"/>
+    <item android:state_pressed="true"
+        android:drawable="@color/item_crash_selected"/>
+    <item android:drawable="@color/item_crash"/>
 </selector>

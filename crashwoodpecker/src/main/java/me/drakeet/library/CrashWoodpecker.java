@@ -31,7 +31,6 @@ import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -42,7 +41,6 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import me.drakeet.library.ui.CatchActivity;
 
 /**
@@ -121,13 +119,13 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         } catch (Exception e) {
             success = false;
         }
-        return success;
+        return false;
     }
 
 
     private void byeByeLittleWood() {
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(1);
+        //android.os.Process.killProcess(android.os.Process.myPid());
+        //System.exit(0);
     }
 
 

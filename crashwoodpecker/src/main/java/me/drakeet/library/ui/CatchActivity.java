@@ -45,7 +45,7 @@ public class CatchActivity extends AppCompatActivity {
     public final static String EXTRA_PACKAGE = "extra_package";
     private RecyclerView mRecyclerView;
     CrashListAdapter mCrashListAdapter;
-    private String[] mCrashArray;
+    private String[] mCrashArray = {"Cause by 1", "At 2"};
     private String mPackageName;
 
     @Override public void onCreate(Bundle savedInstanceState) {
