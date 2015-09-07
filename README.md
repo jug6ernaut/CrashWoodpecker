@@ -14,9 +14,6 @@ dependencies {
   releaseCompile 'me.drakeet.library:crashwoodpecker-do-nothing:0.9.1'
 }
 ```
-**NOTE 1: I updated and uploaded `crashwoodpecker-do-nothing` in 13:49 Sep 6, so that it may not take effect in maven, please wait for a moment.**
-
-**NOTE 2: I spelled `crashwoodpecker` wrongly before, QAQ, it is now correct!! Please correct it yourself if using old address!!**
 
 In your `Application` class:
 
@@ -28,6 +25,16 @@ public class ExampleApplication extends Application {
     CrashWoodpecker.fly().to(this);
   }
 }
+```
+
+And in your `AndroidManifest.xml` file:
+
+```xml
+<application
+    android:name=".ExampleApplication" // <-- 
+    ...>
+    ...
+</application>
 ```
 
 **That is all!** CrashWoodpecker will automatically show an Activity when your app crash with uncaught exceptions in your debug build.
