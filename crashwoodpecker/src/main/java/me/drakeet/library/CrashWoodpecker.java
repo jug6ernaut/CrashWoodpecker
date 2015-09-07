@@ -119,13 +119,13 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
         } catch (Exception e) {
             success = false;
         }
-        return false;
+        return success;
     }
 
 
     private void byeByeLittleWood() {
-        //android.os.Process.killProcess(android.os.Process.myPid());
-        //System.exit(0);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 
 
