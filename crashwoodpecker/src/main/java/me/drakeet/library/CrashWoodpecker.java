@@ -55,7 +55,8 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
     // Default log out time, 7days.
     private final static long LOG_OUT_TIME = 1000 * 60 * 60 * 24 * 7;
 
-    private SimpleDateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    private SimpleDateFormat mFormatter = new SimpleDateFormat(
+            "yyyy-MM-dd-HH-mm-ss");
 
     private volatile UncaughtExceptionHandler mOriginHandler;
     private volatile UncaughtExceptionInterceptor mInterceptor;
@@ -78,7 +79,8 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
     /**
      * Install CrashWoodpecker with forceHandleByOrigin param.
      *
-     * @param forceHandleByOrigin whether to force original UncaughtExceptionHandler handle again,
+     * @param forceHandleByOrigin whether to force original
+     * UncaughtExceptionHandler handle again,
      * by default false.
      * @return CrashWoodpecker instance.
      */
@@ -91,8 +93,9 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
     public void to(Context context) {
         mContext = context;
         try {
-            PackageInfo info =
-                    context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            PackageInfo info = context.getPackageManager()
+                                      .getPackageInfo(context.getPackageName(),
+                                              0);
             mVersion = info.versionName + "(" + info.versionCode + ")";
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -101,8 +104,8 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
 
 
     private CrashWoodpecker() {
-        UncaughtExceptionHandler originHandler =
-                Thread.currentThread().getUncaughtExceptionHandler();
+        UncaughtExceptionHandler originHandler = Thread.currentThread()
+                                                       .getUncaughtExceptionHandler();
 
         // check to prevent set again
         if (this != originHandler) {
@@ -131,7 +134,8 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
     }
 
 
-    @Override public void uncaughtException(Thread thread, Throwable throwable) {
+    @Override
+    public void uncaughtException(Thread thread, Throwable throwable) {
         // Don't re-enter,  avoid infinite loops if crash-handler crashes.
         if (mCrashing) {
             return;
@@ -140,14 +144,16 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
 
         // pass it to interceptor's before method
         UncaughtExceptionInterceptor interceptor = mInterceptor;
-        if (interceptor != null && interceptor.onInterceptExceptionBefore(thread, throwable)) {
+        if (interceptor != null &&
+                interceptor.onInterceptExceptionBefore(thread, throwable)) {
             return;
         }
 
         boolean isHandle = handleException(throwable);
 
         // pass it to interceptor's after method
-        if (interceptor != null && interceptor.onInterceptExceptionAfter(thread, throwable)) {
+        if (interceptor != null &&
+                interceptor.onInterceptExceptionAfter(thread, throwable)) {
             return;
         }
 
@@ -277,7 +283,8 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
 
     public interface UncaughtExceptionInterceptor {
         /**
-         * Called before this uncaught exception be handled by {@link CrashWoodpecker}.
+         * Called before this uncaught exception be handled by {@link
+         * CrashWoodpecker}.
          *
          * @return true if intercepted, which means this event won't be handled
          * by {@link CrashWoodpecker}.
@@ -286,7 +293,8 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
 
         /**
          * Called after this uncaught exception be handled by
-         * {@link CrashWoodpecker} (but before {@link CrashWoodpecker}'s parent).
+         * {@link CrashWoodpecker} (but before {@link CrashWoodpecker}'s
+         * parent).
          *
          * @return true if intercepted, which means this event won't be handled
          * by {@link CrashWoodpecker}'s parent.
