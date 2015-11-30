@@ -106,7 +106,6 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
     private CrashWoodpecker() {
         UncaughtExceptionHandler originHandler = Thread.currentThread()
                                                        .getUncaughtExceptionHandler();
-
         // check to prevent set again
         if (this != originHandler) {
             mOriginHandler = originHandler;
