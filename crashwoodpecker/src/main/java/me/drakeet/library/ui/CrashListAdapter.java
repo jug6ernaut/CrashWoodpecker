@@ -77,12 +77,17 @@ public class CrashListAdapter extends RecyclerView.Adapter<CrashListAdapter.View
             if (mPackageName != null && crash.contains(mPackageName)) {
                 holder.itemView.setSelected(true);
                 int indexOfC = crash.indexOf("(");
-                String atPackage = crash.substring(0, indexOfC);
-                SpannableStringBuilder builder = new SpannableStringBuilder(atPackage).append(
-                        StringStyleUtils.format(holder.title.getContext(),
-                                " " + crash.substring(indexOfC), R.style.LineTextAppearance));
-                CharSequence title = builder.subSequence(0, builder.length());
-                holder.title.setText(title);
+                if (indexOfC >= 0) {
+                    String atPackage = crash.substring(0, indexOfC);
+                    SpannableStringBuilder builder = new SpannableStringBuilder(atPackage).append(
+                            StringStyleUtils.format(holder.title.getContext(),
+                                    " " + crash.substring(indexOfC), R.style.LineTextAppearance));
+                    CharSequence title = builder.subSequence(0, builder.length());
+                    holder.title.setText(title);
+                } 
+                else {
+                    holder.title.setText(crash);
+                }
             }
             else {
                 holder.itemView.setSelected(false);
