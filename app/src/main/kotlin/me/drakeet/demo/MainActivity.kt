@@ -34,29 +34,29 @@ import java.io.IOException
 /**
  * Created by drakeet on 8/31/15.
  */
-public class MainActivity: AppCompatActivity() {
+public class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         findViewById(R.id.button_crash_1)
-                .setOnClickListener {view -> throw IOException("hehe =.=")}
+                .setOnClickListener { view -> throw IOException("hehe =.=") }
 
         findViewById(R.id.button_crash_2)
-                .setOnClickListener {view ->
-                    var run = Runnable { -> throw Exception("from a thread ~.~")}
+                .setOnClickListener { view ->
+                    var run = Runnable { -> throw Exception("from a thread ~.~") }
                     Thread(run).start()
                 }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        getMenuInflater().inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.getItemId()
+        val id = item.itemId
         if (id == R.id.action_settings) {
             return true
         }
