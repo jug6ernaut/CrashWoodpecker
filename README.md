@@ -14,7 +14,7 @@ In your `build.gradle`:
 
 ```gradle
 dependencies {
-  debugCompile 'me.drakeet.library:crashwoodpecker:0.9.7'
+  debugCompile 'me.drakeet.library:crashwoodpecker:0.9.81'
   releaseCompile 'me.drakeet.library:crashwoodpecker-do-nothing:0.9.7'
 }
 ```
