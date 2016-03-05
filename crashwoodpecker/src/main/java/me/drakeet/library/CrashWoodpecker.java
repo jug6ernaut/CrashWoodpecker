@@ -25,6 +25,7 @@
 
 package me.drakeet.library;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -39,8 +40,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import me.drakeet.library.ui.CatchActivity;
 
 /**
@@ -50,62 +53,58 @@ import me.drakeet.library.ui.CatchActivity;
 public class CrashWoodpecker implements UncaughtExceptionHandler {
 
     private final static String TAG = "CrashWoodpecker";
-    private static boolean mForceHandleByOrigin = false;
 
     // Default log out time, 7days.
-    private final static long LOG_OUT_TIME = 1000 * 60 * 60 * 24 * 7;
+    private final static long LOG_OUT_TIME = TimeUnit.DAYS.toMillis(7);
 
-    private SimpleDateFormat mFormatter = new SimpleDateFormat(
-            "yyyy-MM-dd-HH-mm-ss");
+    // get DateFormatter for current locale
+    private final static DateFormat mFormatter = DateFormat.getDateInstance();
 
     private volatile UncaughtExceptionHandler mOriginHandler;
     private volatile UncaughtExceptionInterceptor mInterceptor;
     private volatile boolean mCrashing = false;
 
-    private Context mContext;
-    private String mVersion;
-
+    private boolean mForceHandleByOrigin = false;
+    private final Context mContext;
+    private final String mVersion;
 
     /**
      * Install CrashWoodpecker.
      *
-     * @return CrashWoodpecker instance.
-     */
-    public static CrashWoodpecker fly() {
-        return fly(false);
-    }
-
-
-    /**
-     * Install CrashWoodpecker with forceHandleByOrigin param.
-     *
+     * @param application to capture exceptions for.
      * @param forceHandleByOrigin whether to force original
      * UncaughtExceptionHandler handle again,
      * by default false.
      * @return CrashWoodpecker instance.
      */
-    public static CrashWoodpecker fly(boolean forceHandleByOrigin) {
-        mForceHandleByOrigin = forceHandleByOrigin;
-        return new CrashWoodpecker();
+    public static CrashWoodpecker init(Application application, boolean forceHandleByOrigin) {
+        return new CrashWoodpecker(application, forceHandleByOrigin);
     }
 
+    /**
+     * Install CrashWoodpecker.
+     *
+     * @param application to capture exceptions for.
+     * @return CrashWoodpecker instance.
+     */
+    public static CrashWoodpecker init(Application application) {
+        return new CrashWoodpecker(application, false);
+    }
 
-    public void to(Context context) {
+    private CrashWoodpecker(Context context, boolean forceHandleByOrigin) {
         mContext = context;
+        mForceHandleByOrigin = forceHandleByOrigin;
+
+
         try {
             PackageInfo info = context.getPackageManager()
-                                      .getPackageInfo(context.getPackageName(),
-                                              0);
+                .getPackageInfo(context.getPackageName(), 0);
             mVersion = info.versionName + "(" + info.versionCode + ")";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
 
-
-    private CrashWoodpecker() {
-        UncaughtExceptionHandler originHandler = Thread.currentThread()
-                                                       .getUncaughtExceptionHandler();
+        UncaughtExceptionHandler originHandler = Thread.currentThread().getUncaughtExceptionHandler();
         // check to prevent set again
         if (this != originHandler) {
             mOriginHandler = originHandler;
@@ -113,7 +112,6 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
             Thread.setDefaultUncaughtExceptionHandler(this);
         }
     }
-
 
     private boolean handleException(Throwable throwable) {
         boolean success = saveToFile(throwable);
@@ -187,9 +185,6 @@ public class CrashWoodpecker implements UncaughtExceptionHandler {
      */
     public void deleteLogs(final long timeout) {
         final File logDir = new File(getCrashDir());
-        if (logDir == null) {
-            return;
-        }
         try {
             final long currTime = System.currentTimeMillis();
             File[] files = logDir.listFiles(new FilenameFilter() {

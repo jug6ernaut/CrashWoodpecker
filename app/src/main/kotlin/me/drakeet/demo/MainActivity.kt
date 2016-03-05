@@ -34,20 +34,19 @@ import java.io.IOException
 /**
  * Created by drakeet on 8/31/15.
  */
-public class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById(R.id.button_crash_1)
-                .setOnClickListener { view -> throw IOException("hehe =.=") }
+        findViewById(R.id.button_crash_1).setOnClickListener {
+            view -> throw IOException("hehe =.=")
+        }
 
-        findViewById(R.id.button_crash_2)
-                .setOnClickListener { view ->
-                    var run = Runnable { -> throw Exception("from a thread ~.~") }
-                    Thread(run).start()
-                }
+        findViewById(R.id.button_crash_2).setOnClickListener {
+            view -> Thread({throw Exception("from a thread ~.~")}).start()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -56,10 +55,9 @@ public class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.action_settings) {
-            return true
+        when(item.itemId) {
+            R.id.action_settings -> return true
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 }

@@ -25,28 +25,23 @@
 
 package me.drakeet.library;
 
+import android.app.Application;
 import android.content.Context;
 
 /**
  * Created by drakeet(http://drakeet.me)
  * Date: 9/6/15 13:40
  */
+@SuppressWarnings("unused")
 public class CrashWoodpecker {
 
-    public static CrashWoodpecker fly() {
-        return new CrashWoodpecker();
+    public static CrashWoodpecker init(Application application, boolean forceHandleByOrigin) {
+        return new CrashWoodpecker(application, forceHandleByOrigin);
     }
 
-
-    public static CrashWoodpecker fly(boolean b) {
-        return new CrashWoodpecker();
+    public static CrashWoodpecker init(Application application) {
+        return new CrashWoodpecker(application, false);
     }
 
-
-    public void to(Context context) {
-    }
-
-
-    private CrashWoodpecker() {
-    }
+    private CrashWoodpecker(Context context, boolean forceHandleByOrigin) { }
 }
