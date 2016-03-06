@@ -26,8 +26,8 @@ public class ExampleApplication extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
-    CrashWoodpecker.fly().to(this);
-    // CrashWoodpecker.fly(true /* forceHandleByOrigin */).to(this);
+    CrashWoodpecker.init(this);
+    // CrashWoodpecker.init(this, true /* forceHandleByOrigin */);
   }
 }
 ```
